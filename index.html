@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Ping Monitor</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+        }
+
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid white;
+        }
+
+        th {
+            background-color: #333;
+        }
+
+        .status {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Website Ping Monitor</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Domain</th>
+                <th>Ping (ms)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="domainList">
+            <!-- List of domains will be added here -->
+        </tbody>
+    </table>
+    <script>
+        const domains = [
+            'google.com',
+            'openai.com',
+            '103.84.207.63',
+            'id-1.test3.net',
+            'toketpedia.com',
+            'rwi4.vpsptg.cloud',
+            // Add more domains here
+        ];
+
+        const domainList = document.getElementById('domainList');
+
+        async function pingDomain(domain) {
+            const startTime = Date.now();
+            const response = await fetch(`https://${domain}`, { mode: 'no-cors' }).catch(error => {
+                return -1;
+            });
+            if (response !== -1) {
+                const endTime = Date.now();
+                return endTime - startTime;
+            } else {
+                return -1;
+            }
+        }
+
+        async function monitorDomains() {
+            for (const domain of domains) {
+                const row = document.createElement('tr');
+                const domainCell = document.createElement('td');
+                const pingCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+
+                domainCell.textContent = domain;
+                statusCell.className = 'status';
+                statusCell.textContent = '...';  // Show loading dots
+
+                const ping = await pingDomain(domain);
+                if (ping !== -1) {
+                    pingCell.textContent = `${ping} ms`;
+                    statusCell.textContent = 'Online';
+                } else {
+                    pingCell.textContent = 'N/A';
+                    statusCell.textContent = 'Offline';
+                }
+
+                row.appendChild(domainCell);
+                row.appendChild(pingCell);
+                row.appendChild(statusCell);
+                domainList.appendChild(row);
+            }
+        }
+
+        monitorDomains();
+    </script>
+</body>
+</html>
